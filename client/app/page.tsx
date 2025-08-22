@@ -18,10 +18,10 @@ export default function HomePage() {
   }, [user, isLoading, router]);
 
   return (
-    <div className="flex items-center  min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200">
-      <div className="flex flex-col items-center gap-4 p-8 bg-white rounded-xl shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-neutral-900">
+      <div className="flex flex-col items-center gap-4 p-8 bg-neutral-900 rounded-xl shadow-lg">
         <svg
-          className="animate-spin h-8 w-8 text-indigo-500"
+          className="animate-spin h-8 w-8 text-red-500"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -40,7 +40,7 @@ export default function HomePage() {
             d="M4 12a8 8 0 018-8v8z"
           />
         </svg>
-        <span className="text-lg font-medium text-indigo-700">Loading...</span>
+        <span className="text-lg font-medium text-red-500">Loading...</span>
       </div>
     </div>
   );

@@ -48,9 +48,7 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-        <div className="py-4 text-white">
-          Don't have an account? <Link className="text-red-600" href="/register">Register here</Link>
-        </div>
+        
       </div>
     </div>
   );

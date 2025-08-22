@@ -27,11 +27,13 @@ export default function EmailDetail({ email, isLoading }: EmailDetailProps) {
   }
 
   return (
-    <div className="p-8 bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-800">
-      <h2 className="text-2xl font-extrabold text-white mb-2 drop-shadow">{email.subject}</h2>
-      <p className="mb-2 text-neutral-400"><span className="font-semibold text-red-600">From:</span> {email.from}</p>
-      <hr className="my-4 border-red-800" />
-      <div className="prose max-w-none text-white" dangerouslySetInnerHTML={{ __html: email.body }} />
+    <div className="flex items-start justify-start h-screen w-screen p-5">
+      <div className="p-10 bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-800 mt-4 ml-4">
+        <h2 className="text-2xl font-extrabold text-white mb-2 drop-shadow">{email.subject}</h2>
+        <p className="mb-2 text-neutral-400"><span className="font-semibold text-red-600">From:</span> {email.from}</p>
+        <hr className="my-4 border-red-800" />
+        <div className="prose max-w-none text-white" dangerouslySetInnerHTML={{ __html: email.body }} />
+      </div>
     </div>
   );
 }
