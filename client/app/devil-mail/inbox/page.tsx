@@ -149,11 +149,13 @@ export default function InboxPage() {
         </div> */}
       </aside>
       {/* Email Detail */}
-      <main className="flex-grow flex items-center justify-center bg-black">
-          <EmailDetail
+      <main className="relative h-screen w-screen bg-neutral-900 ">
+      
+        <EmailDetail
             email={selectedEmailDetails}
             isLoading={isLoadingDetails}
           />
+        
       </main>
       {/* Compose Modal */}
       {isComposing && <ComposeModal onClose={() => setIsComposing(false)} />}
