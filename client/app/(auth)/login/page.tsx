@@ -19,9 +19,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-100 via-teal-50 to-white">
-      <div className="bg-white/95 rounded-3xl shadow-2xl p-8 w-full max-w-md border border-cyan-100">
-        <h1 className="text-2xl font-extrabold text-teal-700 mb-6 text-center drop-shadow">
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="bg-neutral-900 rounded-3xl shadow-2xl p-8 w-full max-w-md border border-neutral-800">
+        <h1 className="text-2xl font-extrabold text-white mb-6 text-center drop-shadow">
           Login to Devil Mail
         </h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -31,7 +31,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email (e.g., test@luxidevilott.com)"
             required
-            className="w-full px-4 py-2 border border-cyan-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white/80"
+            className="w-full px-4 py-2 border border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 bg-neutral-800 text-white placeholder-neutral-400"
           />
           <input
             type="password"
@@ -39,17 +39,17 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
-            className="w-full px-4 py-2 border border-cyan-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white/80"
+            className="w-full px-4 py-2 border border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 bg-neutral-800 text-white placeholder-neutral-400"
           />
           <button
             type="submit"
-            className="bg-gradient-to-r from-teal-500 to-cyan-400 text-white px-6 py-2 rounded-xl font-semibold shadow-lg hover:bg-cyan-500 transition-colors"
+            className="bg-red-600 text-white px-6 py-2 rounded-xl font-semibold shadow-lg hover:bg-red-700 transition-colors"
           >
             Login
           </button>
         </form>
-        <div className="py-4 ">
-          Don't have an account? <Link className="text-teal-600" href="/register">Register here</Link>
+        <div className="py-4 text-white">
+          Don't have an account? <Link className="text-red-600" href="/register">Register here</Link>
         </div>
       </div>
     </div>
