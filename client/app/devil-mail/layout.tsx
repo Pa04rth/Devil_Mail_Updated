@@ -26,7 +26,7 @@ export default function DevilMailLayout({
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <Sidebar />
-      <main style={{ flexGrow: 1, height: "100vh" }}>{children}</main>
+      <main style={{ flexGrow: 1, height: "100vh"}}>{children}</main>
     </div>
   );
 }

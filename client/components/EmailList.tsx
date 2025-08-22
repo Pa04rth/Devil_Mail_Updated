@@ -1,6 +1,6 @@
 
 "use client";
-import "./EmailList.css";
+
 
 interface Email {
   id: string;
@@ -21,20 +21,20 @@ export default function EmailList({
 }: EmailListProps) {
   if (emails.length === 0) {
     return (
-      <div className="email-list-empty">No emails found.</div>
+      <div className="text-center py-8 text-slate-400">No emails found.</div>
     );
   }
   return (
-    <div className="email-list">
-      <ul className="email-list-ul">
+    <div className="w-full">
+      <ul className="divide-y divide-slate-200">
         {emails.map((email) => (
           <li
             key={email.id}
             onClick={() => onSelectEmail(email.id)}
-            className={`email-list-li${email.id === selectedEmailId ? " selected" : ""}`}
+            className={`cursor-pointer px-4 py-3 rounded-xl my-2 shadow-sm bg-white/90 hover:bg-cyan-50 transition-colors ${email.id === selectedEmailId ? "bg-cyan-100 border-l-4 border-teal-400" : ""}`}
           >
-            <span className="email-list-from">{email.from}</span>
-            <p className="email-list-subject">{email.subject}</p>
+            <span className="block font-semibold text-teal-700">{email.from}</span>
+            <p className="text-slate-700">{email.subject}</p>
           </li>
         ))}
       </ul>
