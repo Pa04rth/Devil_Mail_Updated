@@ -162,8 +162,102 @@ const sendEmail = async (req, res) => {
   }
 };
 
+const replyEmail = async (req, res) => {
+  const fromEmail = req.user.email;
+  const { to, subject, body, originalId } = req.body;
+
+  if (!to || !subject || !body || !originalId) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const oauth2Client = new google.auth.OAuth2(
+      config.GOOGLE_CLIENT_ID,
+      config.GOOGLE_CLIENT_SECRET
+    );
+    oauth2Client.setCredentials({
+      refresh_token: config.GOOGLE_REFRESH_TOKEN,
+    });
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+    const email = [
+      `From: ${fromEmail}`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      "Content-Type: text/html; charset=UTF-8",
+      "",
+      body,
+    ].join("\n");
+
+    const base64EncodedEmail = Buffer.from(email)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+
+    await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: base64EncodedEmail,
+        threadId: originalId, // reply in the same thread
+      },
+    });
+    res.json({ message: "Reply sent successfully" });
+  } catch (error) {
+    console.error("Error sending reply:", error);
+    res.status(500).json({ error: "Failed to send reply." });
+  }
+};
+
+const forwardEmail = async (req, res) => {
+  const fromEmail = req.user.email;
+  const { to, subject, body, originalId } = req.body;
+
+  if (!to || !subject || !body || !originalId) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const oauth2Client = new google.auth.OAuth2(
+      config.GOOGLE_CLIENT_ID,
+      config.GOOGLE_CLIENT_SECRET
+    );
+    oauth2Client.setCredentials({
+      refresh_token: config.GOOGLE_REFRESH_TOKEN,
+    });
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+    const email = [
+      `From: ${fromEmail}`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      "Content-Type: text/html; charset=UTF-8",
+      "",
+      body,
+    ].join("\n");
+
+    const base64EncodedEmail = Buffer.from(email)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+
+    await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: base64EncodedEmail,
+        threadId: originalId, // forward in the same thread
+      },
+    });
+    res.json({ message: "Email forwarded successfully" });
+  } catch (error) {
+    console.error("Error forwarding email:", error);
+    res.status(500).json({ error: "Failed to forward email." });
+  }
+};
+
 module.exports = {
   fetchEmails,
   sendEmail,
   fetchSingleEmail,
+  replyEmail,
+  forwardEmail,
 };
