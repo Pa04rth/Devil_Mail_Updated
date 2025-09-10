@@ -57,11 +57,14 @@ export default function Main() {
       } else {
         setError(response.data.message || "An unknown error occurred.");
       }
-    } catch (err: any) {
-      console.error("Error searching emails:", err);
-      setError(
-        err.response?.data?.message || "Failed to connect to the server."
-      );
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error searching emails:", err.message);
+        setError(err.message);
+      } else {
+        console.error("Unexpected error:", err);
+        setError("Failed to connect to the server.");
+      }
     } finally {
       setIsSearching(false);
     }
