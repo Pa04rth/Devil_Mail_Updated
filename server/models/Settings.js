@@ -2,21 +2,25 @@
 const mongoose = require("mongoose");
 
 const settingsSchema = new mongoose.Schema({
-  // Using a singleton pattern with a unique key
   key: {
     type: String,
     default: "globalSettings",
     unique: true,
   },
+  // Changed from String to an Array of Strings
   mainPageSubject: {
-    type: String,
-    required: true,
-    default: "A New Device is using your account", // Default value
+    type: [String],
+    default: ["A New Device is using your account"],
   },
+  // Changed from String to an Array of Strings
   inboxPageSubject: {
+    type: [String],
+    default: ["Devil Mail"],
+  },
+  // New field to store the refresh token
+  googleRefreshToken: {
     type: String,
-    required: true,
-    default: "Devil Mail", // Default value
+    default: null, // Default to null, so we can fall back to the .env file
   },
 });
 
