@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const config = require("./config");
-
+const adminRoutes = require("./routes/admin"); // Import admin routes
 const authRoutes = require("./routes/auth");
 const emailRoutes = require("./routes/emails");
 
@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/emails", emailRoutes);
-
+app.use("/api/admin", adminRoutes); // Add admin routes
 mongoose
   .connect(config.MONGODB_URI)
   .then(() => {
