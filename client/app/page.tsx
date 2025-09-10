@@ -12,7 +12,7 @@ export default function HomePage() {
       if (user) {
         router.replace("/devil-mail/inbox");
       } else {
-        router.replace("/login");
+        router.replace("/main");
       }
     }
   }, [user, isLoading, router]);

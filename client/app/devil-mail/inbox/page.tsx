@@ -1,3 +1,4 @@
+// client/app/devil-mail/inbox
 "use client";
 
 import { useEffect, useState } from "react";
@@ -150,12 +151,10 @@ export default function InboxPage() {
       </aside>
       {/* Email Detail */}
       <main className="relative h-screen w-screen bg-neutral-900 ">
-      
         <EmailDetail
-            email={selectedEmailDetails}
-            isLoading={isLoadingDetails}
-          />
-        
+          email={selectedEmailDetails}
+          isLoading={isLoadingDetails}
+        />
       </main>
       {/* Compose Modal */}
       {isComposing && <ComposeModal onClose={() => setIsComposing(false)} />}

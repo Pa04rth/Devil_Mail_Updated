@@ -1,5 +1,5 @@
+// client/contexts/AuthContext.tsx
 "use client";
-
 import React, {
   createContext,
   useState,
@@ -14,6 +14,7 @@ interface User {
   id: string;
   username: string;
   email: string;
+  role: "user" | "admin"; // Added role for type safety
 }
 
 interface AuthContextType {
@@ -32,8 +33,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // This is correct for the "always login" feature. It does not read from localStorage.
   useEffect(() => {
+    // This effect is minimal to avoid session restoration from localStorage,
+    // as per the original file's logic.
     setIsLoading(false);
   }, []);
 
@@ -45,7 +47,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem("token", data.token);
 
-      router.push("/devil-mail/inbox");
+      // Redirect admin users to the admin dashboard
+      if (data.user.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/devil-mail/inbox");
+      }
     } catch (error) {
       console.error("Login failed", error);
       throw error;
@@ -55,7 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    // When logging out, we ensure the token is removed.
     localStorage.removeItem("token");
     router.push("/login");
   };

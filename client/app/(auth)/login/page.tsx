@@ -1,3 +1,4 @@
+// client/app/(auth)/login/page.tsx
 "use client";
 import { useState } from "react";
 import Link from "next/link";
@@ -48,7 +49,6 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-        
       </div>
     </div>
   );
