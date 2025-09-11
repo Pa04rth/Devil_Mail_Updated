@@ -5,16 +5,18 @@ const {
   getSettings,
   updateSettings,
 } = require("../controllers/adminController");
+const { registerByAdmin } = require("../controllers/authController"); // Import the new function
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 // Protect all admin routes
 router.use(authMiddleware, adminMiddleware);
 
-// GET /api/admin/settings
+// Settings routes
 router.get("/settings", getSettings);
-
-// PUT /api/admin/settings
 router.put("/settings", updateSettings);
+
+// NEW: Route for admin to create new users
+router.post("/create-user", registerByAdmin);
 
 module.exports = router;

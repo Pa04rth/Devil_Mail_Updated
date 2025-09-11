@@ -1,3 +1,4 @@
+// server/models/User.js
 const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   username: {
@@ -27,6 +28,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "admin"],
     default: "user",
+  },
+  // NEW FIELD
+  emailType: {
+    type: String,
+    enum: ["single", "bulk"],
+    default: "single", // Default for users from public registration
   },
   createdAt: {
     type: Date,
