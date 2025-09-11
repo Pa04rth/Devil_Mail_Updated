@@ -1,48 +1,31 @@
 // server/controllers/emailController.js
 const { google } = require("googleapis");
 const config = require("../config");
-const Settings = require("../models/Settings"); // Import the Settings model
+const Settings = require("../models/Settings");
 
-/**
- * Dynamically creates and authorizes a Gmail API client.
- * It prioritizes using a refresh token from the database and falls back to the .env file.
- * @returns {Promise<gmail_v1.Gmail>} An authorized Gmail API client instance.
- */
 const getGmailService = async () => {
   const settings = await Settings.findOne({ key: "globalSettings" });
-
-  // Use token from DB if available, otherwise fall back to .env config
   const refreshToken =
     settings?.googleRefreshToken || config.GOOGLE_REFRESH_TOKEN;
-
   if (!refreshToken) {
     throw new Error(
       "Google Refresh Token is not configured in the database or .env file."
     );
   }
-
   const oauth2Client = new google.auth.OAuth2(
     config.GOOGLE_CLIENT_ID,
     config.GOOGLE_CLIENT_SECRET
   );
-  oauth2Client.setCredentials({
-    refresh_token: refreshToken,
-  });
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
   return google.gmail({ version: "v1", auth: oauth2Client });
 };
 
-/**
- * Helper to format emails to prevent code duplication.
- * @param {object} response - The raw message response from the Gmail API.
- * @returns {object} A formatted email object.
- */
 const formatEmailFromResponse = (response) => {
   const detail = response.data;
   const headers = detail.payload.headers;
   const getHeader = (name) =>
     headers.find((h) => h.name.toLowerCase() === name.toLowerCase())?.value ||
     "";
-
   let body = "";
   if (detail.payload.parts) {
     const part =
@@ -54,7 +37,6 @@ const formatEmailFromResponse = (response) => {
   } else if (detail.payload.body.data) {
     body = Buffer.from(detail.payload.body.data, "base64").toString("utf8");
   }
-
   return {
     id: detail.id,
     subject: getHeader("subject"),
@@ -68,17 +50,10 @@ const formatEmailFromResponse = (response) => {
   };
 };
 
-/**
- * Builds a Gmail search query that includes multiple subjects.
- * @param {string} baseQuery - The base part of the query (e.g., 'to:email@example.com').
- * @param {string[]} subjects - An array of subject strings to search for.
- * @returns {string} The final, complete Gmail search query string.
- */
 const buildSearchQuery = (baseQuery, subjects) => {
   if (subjects && subjects.length > 0) {
     const validSubjects = subjects.filter((s) => s && s.trim() !== "");
     if (validSubjects.length > 0) {
-      // Creates a query like: subject:("Subject 1" OR "Subject 2")
       const subjectQueryPart = validSubjects
         .map((s) => `"${s.trim()}"`)
         .join(" OR ");
@@ -98,9 +73,7 @@ const fetchEmails = async (req, res) => {
       maxResults: 25,
     });
     const messages = searchResponse.data.messages;
-    if (!messages || messages.length === 0) {
-      return res.json([]);
-    }
+    if (!messages || messages.length === 0) return res.json([]);
     const emailPromises = messages.map((msg) =>
       gmail.users.messages.get({ userId: "me", id: msg.id, format: "full" })
     );
@@ -113,29 +86,11 @@ const fetchEmails = async (req, res) => {
   }
 };
 
-const fetchSingleEmail = async (req, res) => {
-  try {
-    const gmail = await getGmailService();
-    const emailId = req.params.id;
-    const emailResponse = await gmail.users.messages.get({
-      userId: "me",
-      id: emailId,
-      format: "full",
-    });
-    const formattedEmail = formatEmailFromResponse(emailResponse);
-    res.json(formattedEmail);
-  } catch (error) {
-    console.error("Error fetching single email from Gmail API:", error);
-    res.status(500).json({ error: "Failed to fetch single email." });
-  }
-};
-
 const sendEmail = async (req, res) => {
   const fromEmail = req.user.email;
   const { to, subject, body } = req.body;
-  if (!to || !subject || !body) {
+  if (!to || !subject || !body)
     return res.status(400).json({ error: "All fields are required" });
-  }
   try {
     const gmail = await getGmailService();
     const email = [
@@ -164,9 +119,8 @@ const sendEmail = async (req, res) => {
 const replyEmail = async (req, res) => {
   const fromEmail = req.user.email;
   const { to, subject, body, originalId } = req.body;
-  if (!to || !subject || !body || !originalId) {
+  if (!to || !subject || !body || !originalId)
     return res.status(400).json({ error: "All fields are required" });
-  }
   try {
     const gmail = await getGmailService();
     const email = [
@@ -195,9 +149,8 @@ const replyEmail = async (req, res) => {
 const forwardEmail = async (req, res) => {
   const fromEmail = req.user.email;
   const { to, subject, body, originalId } = req.body;
-  if (!to || !subject || !body || !originalId) {
+  if (!to || !subject || !body || !originalId)
     return res.status(400).json({ error: "All fields are required" });
-  }
   try {
     const gmail = await getGmailService();
     const email = [
@@ -233,8 +186,7 @@ const searchEmailsAuthenticated = async (req, res) => {
     const settings = await Settings.findOne({ key: "globalSettings" });
     const subjects = settings ? settings.inboxPageSubject : ["Devil Mail"];
     const gmail = await getGmailService();
-    const baseQuery = `to:(${email})`;
-    const finalQuery = buildSearchQuery(baseQuery, subjects);
+    const finalQuery = buildSearchQuery(`to:(${email})`, subjects);
     const searchResponse = await gmail.users.messages.list({
       userId: "me",
       q: finalQuery,
@@ -279,8 +231,7 @@ const searchEmailsPublic = async (req, res) => {
       ? settings.mainPageSubject
       : ["A New Device is using your account"];
     const gmail = await getGmailService();
-    const baseQuery = `to:(${email})`;
-    const finalQuery = buildSearchQuery(baseQuery, subjects);
+    const finalQuery = buildSearchQuery(`to:(${email})`, subjects);
     const searchResponse = await gmail.users.messages.list({
       userId: "me",
       q: finalQuery,
@@ -313,6 +264,42 @@ const searchEmailsPublic = async (req, res) => {
   }
 };
 
+const fetchSingleEmail = async (req, res) => {
+  try {
+    const gmail = await getGmailService();
+    const emailId = req.params.id;
+    const emailResponse = await gmail.users.messages.get({
+      userId: "me",
+      id: emailId,
+      format: "full",
+    });
+    const formattedEmail = formatEmailFromResponse(emailResponse);
+    res.json(formattedEmail);
+  } catch (error) {
+    console.error("Error fetching single email from Gmail API:", error);
+    res.status(500).json({ error: "Failed to fetch single email." });
+  }
+};
+
+const fetchSingleEmailPublic = async (req, res) => {
+  try {
+    const gmail = await getGmailService();
+    const emailId = req.params.id;
+    if (!emailId)
+      return res.status(400).json({ error: "Email ID is required." });
+    const emailResponse = await gmail.users.messages.get({
+      userId: "me",
+      id: emailId,
+      format: "full",
+    });
+    const formattedEmail = formatEmailFromResponse(emailResponse);
+    res.json(formattedEmail);
+  } catch (error) {
+    console.error("Error fetching single public email from Gmail API:", error);
+    res.status(500).json({ error: "Failed to fetch single email." });
+  }
+};
+
 module.exports = {
   fetchEmails,
   sendEmail,
@@ -321,4 +308,5 @@ module.exports = {
   forwardEmail,
   searchEmailsAuthenticated,
   searchEmailsPublic,
+  fetchSingleEmailPublic,
 };

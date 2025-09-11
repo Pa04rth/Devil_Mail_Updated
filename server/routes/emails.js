@@ -9,15 +9,16 @@ const {
   forwardEmail,
   searchEmailsAuthenticated,
   searchEmailsPublic,
+  fetchSingleEmailPublic, // IMPORT THE NEW FUNCTION
 } = require("../controllers/emailController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// --- PUBLIC ROUTE ---
-// No auth middleware for the public search
+// --- PUBLIC ROUTES ---
 router.post("/search-public", searchEmailsPublic);
+// NEW: Public route to get a single email by ID
+router.get("/public/:id", fetchSingleEmailPublic);
 
 // --- PROTECTED ROUTES ---
-// All routes below this line require authentication
 router.use(authMiddleware);
 
 router.get("/inbox", fetchEmails);
@@ -25,8 +26,6 @@ router.get("/:id", fetchSingleEmail);
 router.post("/send", sendEmail);
 router.post("/reply", replyEmail);
 router.post("/forward", forwardEmail);
-
-// This replaces the old /search-emails route logic
 router.post("/search-emails", searchEmailsAuthenticated);
 
 module.exports = router;
