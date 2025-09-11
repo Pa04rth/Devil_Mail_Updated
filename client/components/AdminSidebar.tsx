@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
-import { LayoutDashboard, Mail, LogOut } from "lucide-react";
+import { LayoutDashboard, Mail, LogOut, UserPlus } from "lucide-react"; // Import new icon
 
 export default function AdminSidebar() {
   const { user, logout } = useAuth();
@@ -13,6 +13,7 @@ export default function AdminSidebar() {
   const navLinks = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Inbox", href: "/admin/inbox", icon: Mail },
+    { name: "Add Email", href: "/admin/add-email", icon: UserPlus }, // NEW LINK
   ];
 
   return (
@@ -25,7 +26,6 @@ export default function AdminSidebar() {
           Admin Panel
         </h2>
       </div>
-
       <nav className="flex flex-col gap-2">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
@@ -45,7 +45,6 @@ export default function AdminSidebar() {
           );
         })}
       </nav>
-
       {user && (
         <div className="mt-auto flex flex-col gap-4 border-t border-neutral-800 pt-4">
           <div>
