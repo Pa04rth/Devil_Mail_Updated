@@ -20,11 +20,21 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login({ email, password, emailType });
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Login Failed! Please check your credentials."
-      );
+    } catch (err: unknown) {
+      if (err instanceof Error && "response" in err) {
+        // Narrow type: likely AxiosError or similar
+        const responseErr = err as {
+          response?: { data?: { message?: string } };
+        };
+        setError(
+          responseErr.response?.data?.message ||
+            "Login Failed! Please check your credentials."
+        );
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred during login.");
+      }
     } finally {
       setIsLoading(false);
     }

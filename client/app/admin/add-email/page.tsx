@@ -10,6 +10,7 @@ import {
   CheckCircle,
   AlertTriangle,
 } from "lucide-react";
+import axios from "axios";
 
 type EmailType = "single" | "bulk";
 
@@ -37,13 +38,23 @@ const AddUserForm = ({
         password,
         emailType: type,
       });
+
       onUserAdded(data.message);
+
       // Clear form on success
       setUsername("");
       setEmail("");
       setPassword("");
-    } catch (err: any) {
-      setError(err.response?.data?.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "An unexpected error occurred."
+        );
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
